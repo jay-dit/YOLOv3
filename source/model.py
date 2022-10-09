@@ -84,7 +84,7 @@ def build_model(image_height, image_width, n_classes, n_boxes):
 
     res1 = ResBlock_N([64, 32], 3, strides=2, padding='same')(DBL_1)
     res2 = ResBlock_N([128, 64, 64], 3, strides=2, padding='same')(res1)
-    res8 = ResBlock_N([256, 128, 128, 128, 128, 128, 128, 128], 3, strides=2, padding='same')(res2)
+    res8 = ResBlock_N([256, 128, 128, 128, 128, 128, 128, 128], 3, strides=1, padding='same')(res2)
     res4 = ResBlock_N([512, 256, 256, 256, 256], 3,padding='same')(res8)
 
     
@@ -92,7 +92,7 @@ def build_model(image_height, image_width, n_classes, n_boxes):
     DBL_3 = Darknet_BN_Leaky(256, 3, padding='same')(DBL_2)
     DBL_4 = Darknet_BN_Leaky(128, 3, padding='same')(DBL_3)
     DBL_5 = Darknet_BN_Leaky(64, 3, padding='same')(DBL_4)
-    DBL_6 = Darknet_BN_Leaky(32, 3,strides=2, padding='same')(DBL_5)
+    DBL_6 = Darknet_BN_Leaky(32, 3,strides=1, padding='same')(DBL_5)
 
     DBL_7 = Darknet_BN_Leaky(n_boxes*(4+n_classes), 3, padding='same')(DBL_6)
 #    boxes_1 = Reshape((-1, (5+n_classes)), name='boxes1_reshape')(DBL_7)
