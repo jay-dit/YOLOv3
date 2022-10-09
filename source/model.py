@@ -80,7 +80,7 @@ def build_model(image_height, image_width, n_classes, n_boxes):
 
     input_1 = Input(shape = (image_height, image_width, 3), name = 'Input')
 
-    DBL_1 = Darknet_BN_Leaky(64, 3, strides=2, padding= 'same')(input_1)
+    DBL_1 = Darknet_BN_Leaky(32, 3, strides=1, padding= 'same')(input_1)
 
     res1 = ResBlock_N([64, 32], 3, strides=2, padding='same')(DBL_1)
     res2 = ResBlock_N([128, 64, 64], 3, strides=2, padding='same')(res1)
@@ -92,19 +92,21 @@ def build_model(image_height, image_width, n_classes, n_boxes):
     DBL_3 = Darknet_BN_Leaky(256, 3, padding='same')(DBL_2)
     DBL_4 = Darknet_BN_Leaky(128, 3, padding='same')(DBL_3)
     DBL_5 = Darknet_BN_Leaky(64, 3, padding='same')(DBL_4)
-    DBL_6 = Darknet_BN_Leaky(32, 3, padding='same')(DBL_5)
+    DBL_6 = Darknet_BN_Leaky(32, 3,strides=2, padding='same')(DBL_5)
 
-    DBL_7 = Darknet_BN_Leaky((5+n_classes), 3, padding='same')(DBL_6)
-    boxes_1 = Reshape((-1, (5+n_classes)), name='boxes1_reshape')(DBL_7)
+    DBL_7 = Darknet_BN_Leaky(n_boxes*(4+n_classes), 3, padding='same')(DBL_6)
+#    boxes_1 = Reshape((-1, (5+n_classes)), name='boxes1_reshape')(DBL_7)
 
 
-    DBL_8 = Darknet_BN_Leaky(256, 3, padding='same')(DBL_6)
-    up = UpSampling2D((2,2), name='up1')(DBL_8)
-    concat_1 = Concatenate()([up, res8])
-    DBL_9 = Darknet_BN_Leaky((5+n_classes), 3, padding='same')(concat_1)
-    boxes_2 =  Reshape((-1, (5+n_classes)), name='boxes2_reshape')(DBL_9)
+#    DBL_8 = Darknet_BN_Leaky(256, 3, padding='same')(DBL_6)
+#    up = UpSampling2D((2,2), name='up1')(DBL_8)
+#    concat_1 = Concatenate()([up, res8])
+#    DBL_9 = Darknet_BN_Leaky((5+n_classes), 3, padding='same')(concat_1)
+#    boxes_2 =  Reshape((-1, (5+n_classes)), name='boxes2_reshape')(DBL_9)
     
-    output = Concatenate(axis=1)([boxes_1, boxes_2])
-    model = Model(inputs = input_1, outputs = output)
+#    output = Concatenate(axis=1)([boxes_1, boxes_2])
+    model = Model(inputs = input_1, outputs = DBL_7)
 
     return model
+
+
