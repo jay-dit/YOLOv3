@@ -18,7 +18,7 @@ import numpy as np
 model = yl.build_model(128, 128, 1, 1)
 optimizer = tf.keras.optimizers.Adam(learning_rate=0.00005)
 loss = tf.keras.losses.MeanSquaredError(reduction="auto", name="mean_squared_error")
-model.compile(loss="categorical_crossentropy", optimizer=optimizer)
+model.compile(loss=loss, optimizer=optimizer)
 
 x = np.load('data/X.npy')
 y = np.load('data/Y.npy')
