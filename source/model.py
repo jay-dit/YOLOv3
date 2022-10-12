@@ -105,22 +105,37 @@ class Yolo(tf.losses.Loss):
     """Implements Yolo loss"""
 
     def __init__(self, lambda_1, lambda_2):
-        super(Yolo, self).__init__(
-            reduction="none", name="RetinaNetClassificationLoss"
-        )
-        self.__lambda_1 = lambda_1
-        self.__lambda_2 = lambda_2
+        super(Yolo, self).__init__()
+        self.lambda_1 = lambda_1
+        self.lambda_2 = lambda_2
 
     def call(self, y_true, y_pred):
 
-        act_box_mask = y_true[:,:,4] == 1
+        mask = y_true[:,:,4] > 0.5
         
-        act_loss = self.__lambda_1*(y_true[act_box_mask][:,:2] - y_pred[act_box_mask][:,:2])**2 + \
-                    self.__lambda_2*(y_true[act_box_mask][:,2:4]**(0.5) - y_pred[act_box_mask][:,2:4]**(0.5))**2
+        class_loss =  tf.reduce_sum((y_true[:,:,4] - y_pred[:,:,4])**4)
+        
+        difference_x = self.lambda_1*tf.reduce_sum((y_true[:,:,0][mask] - y_pred[:,:,0][mask])**2)
+        
 
-        class_loss =  (y_true[:,:,4] - y_pred[:,:,4])**2
+        difference_y = self.lambda_1*tf.reduce_sum((y_true[:,:,1][mask] - y_pred[:,:,1][mask])**2)
         
-        return tf.reduce_sum(act_loss) +  tf.reduce_sum(class_loss)
+        difference_w = self.lambda_2*tf.reduce_sum((y_true[:,:,2][mask] - y_pred[:,:,2][mask])**2)
+        
+        difference_h = self.lambda_2*tf.reduce_sum((y_true[:,:,3][mask] - y_pred[:,:,3][mask])**2)
+
+        
+        return class_loss + difference_x + difference_y + difference_h + difference_w
+
+    def get_config(self):
+        config = super(Yolo, self).get_config()
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+        
+        
 
 def build_model(image_height, image_width, n_classes, n_boxes):
 
