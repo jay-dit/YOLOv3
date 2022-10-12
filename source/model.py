@@ -24,6 +24,15 @@ class Darknet_BN_Leaky(tf.keras.Model):
         x = self.lrelu(x)
         return x
 
+
+    def get_config(self):
+        config = super(Darknet_BN_Leaky, self).get_config()
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
 class Res_unit(tf.keras.Model):
     def __init__(self,  
                  filters,
@@ -36,6 +45,7 @@ class Res_unit(tf.keras.Model):
                                         kernel = 3,
                                         padding = 'same'
                                         )
+
         
 
     def call(self, input_tensor):
@@ -46,6 +56,14 @@ class Res_unit(tf.keras.Model):
         x += input_tensor
 
         return x 
+
+    def get_config(self):
+        config = super(Res_unit, self).get_config()
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
 
 class ResBlock_N(tf.keras.Model):
 
@@ -74,7 +92,35 @@ class ResBlock_N(tf.keras.Model):
             x = Res_Unit(x)
 
         return x
+    def get_config(self):
+        config = super(ResBlock_N, self).get_config()
+        return config
 
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+    
+class Yolo(tf.losses.Loss):
+    """Implements Yolo loss"""
+
+    def __init__(self, lambda_1, lambda_2):
+        super(Yolo, self).__init__(
+            reduction="none", name="RetinaNetClassificationLoss"
+        )
+        self.__lambda_1 = lambda_1
+        self.__lambda_2 = lambda_2
+
+    def call(self, y_true, y_pred):
+
+        act_box_mask = y_true[:,:,4] == 1
+        
+        act_loss = self.__lambda_1*(y_true[act_box_mask][:,:2] - y_pred[act_box_mask][:,:2])**2 + \
+                    self.__lambda_2*(y_true[act_box_mask][:,2:4]**(0.5) - y_pred[act_box_mask][:,2:4]**(0.5))**2
+
+        class_loss =  (y_true[:,:,4] - y_pred[:,:,4])**2
+        
+        return tf.reduce_sum(act_loss) +  tf.reduce_sum(class_loss)
 
 def build_model(image_height, image_width, n_classes, n_boxes):
 
@@ -88,24 +134,14 @@ def build_model(image_height, image_width, n_classes, n_boxes):
     res4 = ResBlock_N([512, 256, 256, 256, 256], 3,padding='same')(res8)
 
     
-    DBL_2 = Darknet_BN_Leaky(256, 3, strides=2,padding='same')(res4)
+    DBL_2 = Darknet_BN_Leaky(256, 3,padding='same')(res4)
     DBL_3 = Darknet_BN_Leaky(256, 3, padding='same')(DBL_2)
-    DBL_4 = Darknet_BN_Leaky(128, 3, padding='same')(DBL_3)
+    DBL_4 = Darknet_BN_Leaky(128, 3, strides=2, padding='same')(DBL_3)
     DBL_5 = Darknet_BN_Leaky(64, 3, padding='same')(DBL_4)
-    DBL_6 = Darknet_BN_Leaky(32, 3,strides=1, padding='same')(DBL_5)
+    DBL_6 = Darknet_BN_Leaky(32, 3, padding='same')(DBL_5)
 
-    DBL_7 = Darknet_BN_Leaky(n_boxes*(4+n_classes), 3, padding='same')(DBL_6)
-#    boxes_1 = Reshape((-1, (5+n_classes)), name='boxes1_reshape')(DBL_7)
-
-
-#    DBL_8 = Darknet_BN_Leaky(256, 3, padding='same')(DBL_6)
-#    up = UpSampling2D((2,2), name='up1')(DBL_8)
-#    concat_1 = Concatenate()([up, res8])
-#    DBL_9 = Darknet_BN_Leaky((5+n_classes), 3, padding='same')(concat_1)
-#    boxes_2 =  Reshape((-1, (5+n_classes)), name='boxes2_reshape')(DBL_9)
-    
-#    output = Concatenate(axis=1)([boxes_1, boxes_2])
-    model = Model(inputs = input_1, outputs = DBL_7)
+    output = Darknet_BN_Leaky(n_boxes*(4+n_classes), 3, padding='same')(DBL_6)
+    model = Model(inputs = input_1, outputs = output)
 
     return model
 
