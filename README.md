@@ -1,6 +1,4 @@
 # YOLOv3
-<div style='font-size:70%;'>______________________________</div>
-<div style='font-size:70%;'>Lagutov Vladimir 2022</div>
 <div style='padding-top:2em;'>Результат!</div>
 <img src="img\1.jpg">
 <div style='padding-top:1em;'>А теперь немного о том как я к нему пришел</div>
@@ -41,3 +39,5 @@
 <img src="img\3.jpg">
 <div style='padding-top:1em;'>Конечно никакой практической применимость от этого нет</div>
 <div style='padding-top:1em;'>Однако этот результат показывает, что код полностью рабочий и может использоваться на любых данных</div>
+<div style='font-size:70%;'>______________________________</div>
+<div style='font-size:70%;'>Lagutov Vladimir 2022</div>
