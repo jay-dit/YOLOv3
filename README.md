@@ -1,5 +1,5 @@
 # YOLOv3
-<div style='padding-top:2em;'>Результат!</div>
+<div style='padding-top:2em;'>Результат! https://drive.google.com/drive/folders/1eZnhbkI2bzVaWgmAyobjCuxwyVQcBBnt?usp=sharing</div>
 <img src="img\1.jpg">
 <div style='padding-top:1em;'>А теперь немного о том как я к нему пришел</div>
 
