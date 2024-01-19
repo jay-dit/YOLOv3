@@ -1,6 +1,6 @@
 # YOLOv3
 <div style='padding-top:2em;'>Результат!</div>
-<img src="img\1.jpg">
+<img src="img\1.png">
 <div style='padding-top:1em;'>А теперь немного о том как я к нему пришел</div>
 
 <h3 style='color: black; font-weight: bold; font-family: Arial;'>
@@ -34,8 +34,8 @@
 <div style='padding-top:1em;'>Обучение производиось с использование адаптивного шага обучения</div>
 <div style='padding-top:1em;'>Всего 100 эпох (около часа обучения на Видеокарте)</div>
 <div style='padding-top:1em;'>После чего был получен вот такой результат:</div>
-<img src="img\1.jpg">
-<img src="img\2.jpg">
+<img src="img\1.png">
+<img src="img\2.png">
 <div style='padding-top:1em;'>Конечно никакой практической применимость от этого нет</div>
 <div style='padding-top:1em;'>Однако этот результат показывает, что код полностью рабочий и может использоваться на любых данных</div>
 <div style='font-size:70%;'>______________________________</div>
