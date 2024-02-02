@@ -1,6 +1,6 @@
 # YOLOv3
 <div style='padding-top:2em;'>Результат!</div>
-<img src="img\1.png">
+<img src="img\1.png" width="50%">
 <div style='padding-top:1em;'>А теперь немного о том как я к нему пришел</div>
 
 <h3 style='color: black; font-weight: bold; font-family: Arial;'>
